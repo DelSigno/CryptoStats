@@ -93,7 +93,7 @@ public final class MCT
     //
 //    static final java.security.SecureRandom rand = new java.security.SecureRandom();
     //
-    // bear in mind that initialising the latter PRNG is a lengthy process
+    // bear in mind that initializing the latter PRNG is a lengthy process
 
     // statistics fields
     long encBlocks;     // total count of encrypted blocks
