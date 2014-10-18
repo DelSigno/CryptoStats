@@ -1,5 +1,5 @@
 package cryptostats.algorithms;
 
-public class AlgElGamal {
+public class AlgECC {
 
 }
