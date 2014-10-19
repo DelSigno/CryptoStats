@@ -149,12 +149,23 @@ public class CryptoStats {
     }
 	private void run() {
 
+		//Generate random Plaintext
 		File fileToEncrypt = generateRandomPlaintext("testfile", PLAINTEXTLENGTH);
+		
+		//Generate Random key
 		KeySet keySet = null;
-		Object[] encArgs = new Object[] {fileToEncrypt, skeys};
 		try {
-			genKeySet.invoke(null, null);
+			keySet = (KeySet) genKeySet.invoke(null, null);
 		} catch (IllegalAccessException | IllegalArgumentException	| InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		//Encrypts the file
+		Object[] encArgs = new Object[] {fileToEncrypt, keySet.getEncKey()};
+		File cipherText = null;
+		try {
+			cipherText = (File) encrypt.invoke(null, encArgs);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		
