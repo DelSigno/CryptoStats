@@ -97,8 +97,10 @@ public final class test
                     break;
                 else
                     cmd = args[i];
-            } else
+            } else{
                 cmd = "-" + cmd.substring(2);
+            }
+            
             
             if (cmd.startsWith("-k")) {
                 varKey = true;
