@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -14,34 +15,39 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 public class AlgAES implements ValidAlgorithm {
 
+	private KeySet keySet = null;
+	private byte[] initVector = null;
+	
 	public AlgAES(){
 
 	}
 
 	@Override
-	public KeySet generateRandomKeySet() {
+	public void generateRandomKeySet() {
 		KeyGenerator keyGen = null;
 		try {
 			keyGen = KeyGenerator.getInstance("AES");
 		} catch (NoSuchAlgorithmException e) {
 			boolean fucked = true;
 		}
-		keyGen.init(256); 
+		keyGen.init(128);//128 192 256 
 		SecretKey secretKey = keyGen.generateKey();
 		//symmetric so return the same key.
-		return new KeySet(secretKey, secretKey);
+		keySet = new KeySet(secretKey, secretKey);
 	}
 
 	@Override
-	public File encryptFile(File fileIn, Object key) {
+	public File encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-			cipher.init(Cipher.ENCRYPT_MODE, (SecretKey)key);
+			cipher.init(Cipher.ENCRYPT_MODE, (Key)keySet.getEncKey());
+			initVector = cipher.getIV();
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
@@ -65,12 +71,12 @@ public class AlgAES implements ValidAlgorithm {
 	}
 
 	@Override
-	public File decryptFile(File fileIn, Object key) {
+	public File decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-			cipher.init(Cipher.DECRYPT_MODE, (SecretKey)key);
+			cipher.init(Cipher.DECRYPT_MODE, (Key)keySet.getDecKey(), new IvParameterSpec(initVector));
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
@@ -85,7 +91,7 @@ public class AlgAES implements ValidAlgorithm {
 	        outputStream.close();
 	        
 	        return fileOut;
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
+		} catch (InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}

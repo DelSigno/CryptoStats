@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import cryptostats.algorithms.AlgAES;
 import cryptostats.algorithms.KeySet;
+import cryptostats.algorithms.ValidAlgorithm;
 import NIST.MCT;
 
 
@@ -18,6 +20,7 @@ public class CryptoStats {
 	 * bothered implementing, I'm a douche
 	 */
 	private static final String ALGNAME = "AlgAES";
+	ValidAlgorithm algorithmInstance = new AlgAES();
 	private static final int PLAINTEXTLENGTH = 1000;//in kilobytes
 	
 	
@@ -48,6 +51,7 @@ public class CryptoStats {
 	private String cipherName = null; // cipher algorithm name, probably wont use
 	private int[] keys = new int[] {256}; // key-length values to test with
 	private String keyLengths = "256";
+
 
 	//HOLY SHIT YOU CAN STORE METHODS, I never realized you could do this.
 	//For real, this is crazy, my mind is blown. Like, greatest day ever...
@@ -109,7 +113,7 @@ public class CryptoStats {
                 "> is not a directory");
         
         //This is when things get fun
-        String algoritm = "cryptostats.algorithms" + cipherName;
+        String algoritm = "cryptostats.algorithms." + cipherName;
         try {
             Class algorithm = Class.forName(algoritm);
             // inspect the Basic API class
@@ -119,17 +123,17 @@ public class CryptoStats {
                 int params = methods[i].getParameterTypes().length;
                 if (name.equals("generateRandomKeySet") && (params == 0))
                     genKeySet = methods[i];
-                else if (name.equals("blockEncrypt") && (params == 2))
+                else if (name.equals("encryptFile") && (params == 2))
                     encrypt = methods[i];
-                else if (name.equals("blockDecrypt") && (params == 2))
+                else if (name.equals("decryptFile") && (params == 2))
                     decrypt = methods[i];
             }
             if (genKeySet == null)
-                throw new NoSuchMethodException("makeKey()");
+                throw new NoSuchMethodException("generateRandomKeySet()");
             if (encrypt == null)
-                throw new NoSuchMethodException("blockEncrypt()");
+                throw new NoSuchMethodException("encryptFile()");
             if (decrypt == null)
-                throw new NoSuchMethodException("blockDecrypt()");
+                throw new NoSuchMethodException("decryptFile()");
         } catch (ClassNotFoundException x1) {
             halt("Unable to find "+algoritm+" class");
         } catch (NoSuchMethodException x2) {
@@ -155,7 +159,7 @@ public class CryptoStats {
 		//Generate Random key
 		KeySet keySet = null;
 		try {
-			keySet = (KeySet) genKeySet.invoke(null, null);
+			keySet = (KeySet) genKeySet.invoke(algorithmInstance);
 		} catch (IllegalAccessException | IllegalArgumentException	| InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -164,7 +168,16 @@ public class CryptoStats {
 		Object[] encArgs = new Object[] {fileToEncrypt, keySet.getEncKey()};
 		File cipherText = null;
 		try {
-			cipherText = (File) encrypt.invoke(null, encArgs);
+			cipherText = (File) encrypt.invoke(algorithmInstance, encArgs);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		//Decrypts the file
+		Object[] decArgs = new Object[] {cipherText, keySet.getDecKey()};
+		File plainTextPrime = null;
+		try {
+			plainTextPrime = (File) decrypt.invoke(algorithmInstance, decArgs);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}

@@ -5,7 +5,7 @@ import java.security.InvalidKeyException;
 
 public interface ValidAlgorithm {
 	
-	public KeySet generateRandomKeySet();
-	public File encryptFile(File fileIn, Object key);
-	public File decryptFile(File fileIn, Object key);
+	public void generateRandomKeySet();
+	public File encryptFile(File fileIn);
+	public File decryptFile(File fileIn);
 }
