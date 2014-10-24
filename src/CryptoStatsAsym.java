@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 import cryptostats.algorithms.AlgAES;
+import cryptostats.algorithms.AlgElGamal;
 import cryptostats.algorithms.AlgRSA;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
@@ -20,8 +21,11 @@ import NIST.MCT;
 public class CryptoStatsAsym {
 
 
-	private static final String ALGNAME = "AlgRSA";
-	ValidAlgorithm algorithmInstance = new AlgRSA();
+	//private static final String ALGNAME = "AlgRSA";
+	private static final String ALGNAME = "AlgElGamal";
+	
+	//ValidAlgorithm algorithmInstance = new AlgRSA();
+	ValidAlgorithm algorithmInstance = new AlgElGamal();
 	
 	private static final String INITIALFILENAME = "rsatest";
 	private static final int PLAINTEXTLENGTH = 112;//in bytes
