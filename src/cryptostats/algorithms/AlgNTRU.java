@@ -71,7 +71,7 @@ public class AlgNTRU implements ValidAlgorithm{
 	        //reads the data from a file into the array of byes inputBytes
 	        inputStream.read(inputBytes);
 	         
-	        byte[] outputBytes = ntru.encrypt(inputBytes,keyset);
+	        byte[] outputBytes = ntru.encrypt(inputBytes,ssKey.getPublic());
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -80,7 +80,7 @@ public class AlgNTRU implements ValidAlgorithm{
 	        outputStream.close();
 	        
 	        return fileOut;
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -92,14 +92,14 @@ public class AlgNTRU implements ValidAlgorithm{
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
-			Cipher cipher = Cipher.getInstance("NTRU/None/NoPadding", "BC");
-			cipher.init(Cipher.DECRYPT_MODE, (Key)keySet.getDecKey());
+
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
+	        //Read ths file into an array of bytes
 	        inputStream.read(inputBytes);
 	         
-	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        byte[] outputBytes = ntru.decrypt(inputBytes, ssKey);
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -108,7 +108,7 @@ public class AlgNTRU implements ValidAlgorithm{
 	        outputStream.close();
 	        
 	        return fileOut;
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}

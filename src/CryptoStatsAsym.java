@@ -32,7 +32,8 @@ public class CryptoStatsAsym {
 
 	
 	private static final String INITIALFILENAME = "ntrutest";
-	private static final int PLAINTEXTLENGTH = 112;//in bytes
+	private static final int PLAINTEXTLENGTH = 65;//in bytes
+	private static final int TESTS = 10;
 	private static final long NANOCONVERTER = 1000000000L;
 	
 
