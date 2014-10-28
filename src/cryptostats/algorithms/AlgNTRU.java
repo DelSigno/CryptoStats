@@ -24,15 +24,21 @@ import java.math.BigInteger;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import net.sf.ntru.encrypt.EncryptionKeyPair;
+import net.sf.ntru.encrypt.EncryptionParameters;
+import net.sf.ntru.encrypt.NtruEncrypt;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public class AlgElGamal implements ValidAlgorithm{
+public class AlgNTRU implements ValidAlgorithm{
 
 	private KeySet keySet = null;
 	private SecureRandom random;
-	private KeyPair ssKey;
+	private EncryptionKeyPair ssKey;
+	private NtruEncrypt ntru = new NtruEncrypt(EncryptionParameters.APR2011_439_FAST);
 
-	public AlgElGamal(){
+
+	public AlgNTRU(){
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		random = new SecureRandom();
 	}
@@ -43,18 +49,12 @@ public class AlgElGamal implements ValidAlgorithm{
 	@Override
 	public void generateRandomKeySet() {
 		KeyPairGenerator keyGen = null;
-		try {
-			keyGen = KeyPairGenerator.getInstance("ElGamal", "BC");
-		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			boolean fucked = true;
-		}
-
+		EncryptionKeyPair kp = ntru.generateKeyPair();
 	
-		keyGen.initialize(512);//128 , nor sure if this is good, just default setting	
-		KeyPair secretKey = keyGen.generateKeyPair();
-		ssKey = secretKey;
+		
+		ssKey = kp;
 		//symmetric so return the same key.
-		keySet = new KeySet(secretKey.getPrivate(), secretKey.getPublic());
+		//keySet = new KeySet(kp.getPrivate(), kp.getPublic());
 		
 		
 	}
@@ -64,15 +64,14 @@ public class AlgElGamal implements ValidAlgorithm{
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
-			Cipher cipher = Cipher.getInstance("ElGamal/None/NoPadding", "BC");
-			cipher.init(Cipher.ENCRYPT_MODE, ssKey.getPrivate(), random);
 
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
+	        //reads the data from a file into the array of byes inputBytes
 	        inputStream.read(inputBytes);
 	         
-	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        byte[] outputBytes = ntru.encrypt(inputBytes,keyset);
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -93,7 +92,7 @@ public class AlgElGamal implements ValidAlgorithm{
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
-			Cipher cipher = Cipher.getInstance("ElGamal/None/NoPadding", "BC");
+			Cipher cipher = Cipher.getInstance("NTRU/None/NoPadding", "BC");
 			cipher.init(Cipher.DECRYPT_MODE, (Key)keySet.getDecKey());
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);

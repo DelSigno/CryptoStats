@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 import cryptostats.algorithms.AlgAES;
 import cryptostats.algorithms.AlgElGamal;
+import cryptostats.algorithms.AlgNTRU;
 import cryptostats.algorithms.AlgRSA;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
@@ -22,12 +23,15 @@ public class CryptoStatsAsym {
 
 
 	//private static final String ALGNAME = "AlgRSA";
-	private static final String ALGNAME = "AlgElGamal";
-	
+	//private static final String ALGNAME = "AlgElGamal";
+	private static final String ALGNAME = "AlgNTRU";
+
 	//ValidAlgorithm algorithmInstance = new AlgRSA();
-	ValidAlgorithm algorithmInstance = new AlgElGamal();
+	//ValidAlgorithm algorithmInstance = new AlgElGamal();
+	ValidAlgorithm algorithmInstance = new AlgNTRU();
+
 	
-	private static final String INITIALFILENAME = "rsatest";
+	private static final String INITIALFILENAME = "ntrutest";
 	private static final int PLAINTEXTLENGTH = 112;//in bytes
 	private static final long NANOCONVERTER = 1000000000L;
 	
