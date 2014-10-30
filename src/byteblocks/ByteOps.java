@@ -17,12 +17,18 @@ public class ByteOps {
 	}
 	
 	/**
-	 * Returns a new byte with the selected bit of the target set to value
+	 * Returns a new byte with the selected bit of the target set to value. The LSB is zero
 	 * @param target
 	 * @return
 	 */
-	public static byte[] setBitNumber(byte target, int number, boolean value){
-		
+	public static byte setBitNumber(byte target, int number, int value){
+		if(value == 1){
+			return (byte)((1 << number) | target);
+		}else if(value == 0){
+			return (byte)(~(1 << number) & target);
+		}else{
+			return (Byte) null;
+		}
 	}
 	
 	
