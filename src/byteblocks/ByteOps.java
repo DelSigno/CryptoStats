@@ -2,6 +2,17 @@ package byteblocks;
 
 public class ByteOps {
 
+	/*public static void main(String[] args){
+		byte thenumber = 1;
+		
+		int lsb = getLSB(thenumber);
+		System.out.println("thenumber is  now: "+thenumber);
+		thenumber = setBitNumber(thenumber,3,lsb);
+		System.out.println("thenumber is  now: "+thenumber);
+	}*/
+	
+	
+	
 	public static int getLSB(byte target){
 		return target & 1;
 	}
