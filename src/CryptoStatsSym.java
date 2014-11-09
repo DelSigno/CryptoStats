@@ -56,7 +56,7 @@ public class CryptoStatsSym {
 	private TestTimer testFileTime(int fileSize) {
 
 		//Generate random Plaintext
-		File fileToEncrypt = generateRandomPlaintext("testfile", fileSize);
+		File fileToEncrypt = generateRandomPlaintext(ALGNAME+"_testfile", fileSize);
 		TestTimer testTimer = new TestTimer();
 		
 		//Generate Random key

@@ -26,17 +26,24 @@ public class ByteOps {
 	 * @return
 	 */
 	public static int getBitNumber(byte target, int number){
-		return (target << number) & 1;
+		int returnbit = (target >> number) & 0x01;
+		System.out.println("getBitNumber -> target: " + target);
+		System.out.println("getBitNumber -> return bit: " + returnbit);
+		return returnbit;
 	}
 	
 	/**
 	 * Returns a new byte with the selected bit of the target set to value. The LSB is zero
 	 * @param target
+	 * @param number position of the target bit
+	 * @param value either one or zero to dictate the new value
 	 * @return
 	 */
 	public static byte setBitNumber(byte target, int number, int value){
 		byte[] whatever = {target};
-		System.out.println("setBitNumber -> target : "+ DatatypeConverter.printHexBinary(whatever) + " --- " + whatever.length);
+		System.out.println("setBitNumber -> target : "+ DatatypeConverter.printHexBinary(whatever) );
+		System.out.println("setBitNumber -> value : "+ value);
+
 		if(value == 1){
 			byte returnNumber = (byte)((1 << number) | target);
 			System.out.println("setBitNumber -> returnNumber : "+ returnNumber);
