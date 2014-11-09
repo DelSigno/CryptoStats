@@ -22,7 +22,7 @@ public class Block {
 		hex = DatatypeConverter.printHexBinary(testBlock.getBytes());
 		System.out.println(hex); 
 		
-		for(int i = 0; i < 12; i++){
+		for(int i = 0; i < 24; i++){
 			testBlock.wrapRotateLeft();
 			hex = DatatypeConverter.printHexBinary(testBlock.getBytes());
 			System.out.println(hex); 
