@@ -1,5 +1,7 @@
 package byteblocks;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class ByteOps {
 
 	/*public static void main(String[] args){
@@ -33,10 +35,16 @@ public class ByteOps {
 	 * @return
 	 */
 	public static byte setBitNumber(byte target, int number, int value){
+		byte[] whatever = {target};
+		System.out.println("setBitNumber -> target : "+ DatatypeConverter.printHexBinary(whatever) + " --- " + whatever.length);
 		if(value == 1){
-			return (byte)((1 << number) | target);
+			byte returnNumber = (byte)((1 << number) | target);
+			System.out.println("setBitNumber -> returnNumber : "+ returnNumber);
+			return returnNumber;
 		}else if(value == 0){
-			return (byte)(~(1 << number) & target);
+			byte returnNumber = (byte)(~(1 << number) & target);
+			System.out.println("setBitNumber -> returnNumber : "+ returnNumber);
+			return returnNumber;
 		}else{
 			return (Byte) null;
 		}

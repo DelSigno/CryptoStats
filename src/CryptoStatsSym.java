@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 import cryptostats.algorithms.AlgAES;
+import cryptostats.algorithms.AlgSERPENT;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import cryptostats.timeing.TestTimer;
@@ -19,8 +20,10 @@ import NIST.MCT;
 public class CryptoStatsSym {
 
 
-	private static final String ALGNAME = "AlgAES";
-	ValidAlgorithm algorithmInstance = new AlgAES();
+	//private static final String ALGNAME = "AlgAES";
+	//ValidAlgorithm algorithmInstance = new AlgAES();
+	private static final String ALGNAME = "AlgSERPENT";
+	ValidAlgorithm algorithmInstance = new AlgSERPENT();
 	
 	
 	private static final int PLAINTEXTLENGTH = 1000000;//in bytes
