@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 import cryptostats.algorithms.AlgAES;
 import cryptostats.algorithms.AlgSERPENT;
+import cryptostats.algorithms.AlgSIMON;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import cryptostats.timeing.TestTimer;
@@ -22,11 +23,14 @@ public class CryptoStatsSym {
 
 	//private static final String ALGNAME = "AlgAES";
 	//ValidAlgorithm algorithmInstance = new AlgAES();
-	private static final String ALGNAME = "AlgSERPENT";
-	ValidAlgorithm algorithmInstance = new AlgSERPENT();
+	//private static final String ALGNAME = "AlgSERPENT";
+	//ValidAlgorithm algorithmInstance = new AlgSERPENT();
+	private static final String ALGNAME = "AlgSIMON";
+	ValidAlgorithm algorithmInstance = new AlgSIMON();
 	
-	
-	private static final int PLAINTEXTLENGTH = 1000000;//in bytes
+	//AES and Serpent work with long files
+	//SIMON and SPECK must have 128/8 file size
+	private static final int PLAINTEXTLENGTH = 128/8;//in bytes
 	private static final long NANOCONVERTER = 1000000000L;
 	
 

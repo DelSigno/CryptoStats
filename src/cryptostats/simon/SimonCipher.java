@@ -1,5 +1,5 @@
 package cryptostats.simon;
 
-public class Block128 {
+public class SimonCipher {
 
 }
