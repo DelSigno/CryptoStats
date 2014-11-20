@@ -12,8 +12,10 @@ import java.util.StringTokenizer;
 import cryptostats.algorithms.AlgAES;
 import cryptostats.algorithms.AlgSERPENT;
 import cryptostats.algorithms.AlgSIMON;
+import cryptostats.algorithms.AlgSPECK;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
+import cryptostats.data.AlgSet;
 import cryptostats.timeing.TestTimer;
 import NIST.MCT;
 
@@ -21,30 +23,6 @@ import NIST.MCT;
 public class CryptoStatsSym {
 
 
-	//private static final String ALGNAME = "AlgAES";
-	//ValidAlgorithm algorithmInstance = new AlgAES();
-	//private static final String ALGNAME = "AlgSERPENT";
-	//ValidAlgorithm algorithmInstance = new AlgSERPENT();
-	private static final String ALGNAME = "AlgSIMON";
-	ValidAlgorithm algorithmInstance = new AlgSIMON();
-	
-	//AES and Serpent work with long files
-	//SIMON and SPECK must have 128/8 file size
-	private static final int PLAINTEXTLENGTH = 128/8;//in bytes
-	private static final long NANOCONVERTER = 1000000000L;
-	
-
-	public static void main(String[] args) {
-		
-		CryptoStatsSym meta = new CryptoStatsSym();
-		TestTimer timer = meta.testFileTime(PLAINTEXTLENGTH);
-
-		System.out.println("Encryption time: " + ((double)timer.getEncTime())/NANOCONVERTER + "\n");
-		System.out.println("Decryption time: " + ((double)timer.getDecTime())/NANOCONVERTER + "\n");
-		System.out.println("Total time: " + ((double)timer.getTotalTime())/NANOCONVERTER + "\n");
-
-		
-	}
 	
 	/**
 	 * Some variable we may use
@@ -53,14 +31,27 @@ public class CryptoStatsSym {
 	private File destination = null;     // destination directory File object
 	private String cipherName = null; // cipher algorithm name, probably wont use
 	
-
+	private ValidAlgorithm algorithmInstance;
+	private String algName;
 
 	
+	//CONSTRUCTOR
+	public CryptoStatsSym(AlgSet alg){
+		this.algorithmInstance = alg.getAlg();
+		this.algName = alg.getName();
+	}
+	
+	public void update(AlgSet alg){
+		this.algorithmInstance = alg.getAlg();
+		this.algName = alg.getName();
+	}
+	
+	
    
-	private TestTimer testFileTime(int fileSize) {
+	public TestTimer testFileTime(int fileSize) {
 
 		//Generate random Plaintext
-		File fileToEncrypt = generateRandomPlaintext(ALGNAME+"_testfile", fileSize);
+		File fileToEncrypt = generateRandomPlaintext(algName + "_testfile", fileSize);
 		TestTimer testTimer = new TestTimer();
 		
 		//Generate Random key
@@ -75,6 +66,9 @@ public class CryptoStatsSym {
 		File decryptedFile = algorithmInstance.decryptFile(encryptedFile);
 		testTimer.setDecTime(System.nanoTime() - startTime - testTimer.getEncTime());
 		
+		
+		
+		//From this point on we are just checking for consistency between streams
 		DataInputStream originalFileStream;
 		DataInputStream modFileStream;
 		
@@ -103,7 +97,7 @@ public class CryptoStatsSym {
 		
 	}
 	
-	private File generateRandomPlaintext(String name, int length){
+	public File generateRandomPlaintext(String name, int length){
 		int byteLength = length;
 		byte[] pt = new byte[byteLength];
 		Random rand = new Random();

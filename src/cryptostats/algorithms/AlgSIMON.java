@@ -17,7 +17,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import cryptostats.data.FileGeneratorHelper;
-import cryptostats.simon.SimonEngine;
+import cryptostats.simonspeck.SimonEngine;
 
 public class AlgSIMON implements ValidAlgorithm{
 

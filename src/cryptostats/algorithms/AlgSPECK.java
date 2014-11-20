@@ -17,7 +17,8 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import cryptostats.data.FileGeneratorHelper;
-import cryptostats.simon.SimonEngine;
+import cryptostats.simonspeck.SimonEngine;
+import cryptostats.simonspeck.SpeckEngine;
 
 public class AlgSPECK implements ValidAlgorithm{
 
@@ -26,7 +27,7 @@ public class AlgSPECK implements ValidAlgorithm{
 	/**
 	 * We use a 128 bit block and key to remain consistant with AES and Serpent
 	 */
-	private SimonEngine engine = new SimonEngine(128);
+	private SpeckEngine engine = new SpeckEngine(128);
 	public AlgSPECK(){
 		
 	}

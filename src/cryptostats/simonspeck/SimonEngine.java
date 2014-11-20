@@ -1,4 +1,4 @@
-package cryptostats.simon;
+package cryptostats.simonspeck;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
