@@ -16,8 +16,10 @@ import javax.crypto.NoSuchPaddingException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 
+import cryptostats.data.FileAndTimer;
 import cryptostats.data.FileGeneratorHelper;
 import cryptostats.simonspeck.SimonEngine;
+import cryptostats.timeing.TestTimer;
 
 public class AlgSIMON implements ValidAlgorithm{
 
@@ -27,8 +29,10 @@ public class AlgSIMON implements ValidAlgorithm{
 	 * We use a 128 bit block and key to remain consistant with AES and Serpent
 	 */
 	private SimonEngine engine = new SimonEngine(128);
+	private FileAndTimer fat = new FileAndTimer();
+	
 	public AlgSIMON(){
-		
+		fat.testTimer =  new TestTimer();
 	}
 	@Override
 	public void generateRandomKeySet() {
@@ -38,7 +42,7 @@ public class AlgSIMON implements ValidAlgorithm{
 	}
 
 	@Override
-	public File encryptFile(File fileIn) {
+	public FileAndTimer encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
@@ -50,7 +54,26 @@ public class AlgSIMON implements ValidAlgorithm{
 	        inputStream.read(inputBytes);
 	         
 	        byte[] outputBytes = new byte[inputBytes.length];
-	        engine.processBlock(inputBytes,0,outputBytes,0);
+	        
+	        //byte[] tempOutput = new byte[16];
+	        //byte[] tempInput = new byte[16];
+	        
+	        fat.testTimer.startEncTimer();
+	        for(int i = 0; ((i+1)*16) <= inputBytes.length; i++){
+	        	/*System.out.println("Simon encrypting Block #" + (i+1));
+	        	for(int j = 0; j < 16; j++){
+	        		tempInput[j] = inputBytes[(i*16)+j]; 
+	        		
+	        	}*/
+	        	
+	        	engine.processBlock(inputBytes,(i*16),outputBytes,(i*16));
+	        	
+	        	/*for(int j = 0; j < 16; j++){
+	        		outputBytes[(i*16)+j] = tempOutput[j];
+	        		
+	        	}*/
+	        }   
+	        fat.testTimer.endEncTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -58,7 +81,8 @@ public class AlgSIMON implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -66,7 +90,7 @@ public class AlgSIMON implements ValidAlgorithm{
 	}
 
 	@Override
-	public File decryptFile(File fileIn) {
+	public FileAndTimer decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
@@ -78,7 +102,14 @@ public class AlgSIMON implements ValidAlgorithm{
 	        inputStream.read(inputBytes);
 	         
 	        byte[] outputBytes = new byte[inputBytes.length];
-	        engine.processBlock(inputBytes,0,outputBytes,0);
+	        
+	        fat.testTimer.startDecTimer();
+	        for(int i = 0; ((i+1)*16) <= inputBytes.length; i++){
+	        	
+	        	engine.processBlock(inputBytes,(i*16),outputBytes,(i*16));
+	        	
+	        } 
+	        fat.testTimer.endDecTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -86,7 +117,8 @@ public class AlgSIMON implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

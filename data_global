@@ -1,8 +1,8 @@
 -------AlgAES-------
-final average encryption time after convergence: 17744.560336338990
+final average encryption rate (bytes/second) after convergence: 931838334.320312900000
 -------AlgSERPENT-------
-final average encryption time after convergence: 0.000000000000
+final average encryption rate (bytes/second) after convergence: 369554637.910169800000
 -------AlgSIMON-------
-final average encryption time after convergence: 0.000000000000
+final average encryption rate (bytes/second) after convergence: 428081012.101619900000
 -------AlgSPECK-------
-final average encryption time after convergence: 0.000000000000
+final average encryption rate (bytes/second) after convergence: 993260005.278535200000

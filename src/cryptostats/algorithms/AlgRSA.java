@@ -19,12 +19,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import cryptostats.data.FileAndTimer;
+import cryptostats.timeing.TestTimer;
+
 public class AlgRSA implements ValidAlgorithm{
 
 	private KeySet keySet = null;
+	private FileAndTimer fat = new FileAndTimer();
 	
 	public AlgRSA(){
-		
+		fat.testTimer =  new TestTimer();
 	}
 	
 	@Override
@@ -43,7 +47,7 @@ public class AlgRSA implements ValidAlgorithm{
 	}
 
 	@Override
-	public File encryptFile(File fileIn) {
+	public FileAndTimer encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
@@ -54,7 +58,9 @@ public class AlgRSA implements ValidAlgorithm{
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startEncTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        fat.testTimer.endEncTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -62,7 +68,8 @@ public class AlgRSA implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
 			e.printStackTrace();
 			return null;
@@ -72,7 +79,7 @@ public class AlgRSA implements ValidAlgorithm{
 	}
 
 	@Override
-	public File decryptFile(File fileIn) {
+	public FileAndTimer decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
@@ -83,15 +90,18 @@ public class AlgRSA implements ValidAlgorithm{
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startDecTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
-	         
+	        fat.testTimer.endDecTimer(); 
+	        
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
 	         
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
 			e.printStackTrace();
 			return null;

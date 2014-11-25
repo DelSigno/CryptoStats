@@ -30,17 +30,22 @@ import net.sf.ntru.encrypt.NtruEncrypt;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import cryptostats.data.FileAndTimer;
+import cryptostats.timeing.TestTimer;
+
 public class AlgNTRU implements ValidAlgorithm{
 
 	private KeySet keySet = null;
 	private SecureRandom random;
 	private EncryptionKeyPair ssKey;
 	private NtruEncrypt ntru = new NtruEncrypt(EncryptionParameters.APR2011_439_FAST);
+	private FileAndTimer fat = new FileAndTimer();
 
 
 	public AlgNTRU(){
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		random = new SecureRandom();
+		fat.testTimer =  new TestTimer();
 	}
 	
 	
@@ -60,7 +65,7 @@ public class AlgNTRU implements ValidAlgorithm{
 	}
 
 	@Override
-	public File encryptFile(File fileIn) {
+	public FileAndTimer encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
@@ -71,7 +76,9 @@ public class AlgNTRU implements ValidAlgorithm{
 	        //reads the data from a file into the array of byes inputBytes
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startEncTimer();
 	        byte[] outputBytes = ntru.encrypt(inputBytes,ssKey.getPublic());
+	        fat.testTimer.endEncTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -79,7 +86,8 @@ public class AlgNTRU implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -88,7 +96,7 @@ public class AlgNTRU implements ValidAlgorithm{
 	}
 
 	@Override
-	public File decryptFile(File fileIn) {
+	public FileAndTimer decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
@@ -99,7 +107,9 @@ public class AlgNTRU implements ValidAlgorithm{
 	        //Read ths file into an array of bytes
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startDecTimer();
 	        byte[] outputBytes = ntru.decrypt(inputBytes, ssKey);
+	        fat.testTimer.endDecTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -107,7 +117,8 @@ public class AlgNTRU implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

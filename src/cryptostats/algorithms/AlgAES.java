@@ -8,6 +8,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -17,21 +18,26 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import cryptostats.data.FileAndTimer;
+import cryptostats.timeing.TestTimer;
+
 public class AlgAES implements ValidAlgorithm {
 
 	private KeySet keySet = null;
 	private byte[] initVector = null;
+	private FileAndTimer fat = new FileAndTimer();
+
 	
 	public AlgAES(){
-
+        fat.testTimer =  new TestTimer();
 	}
 
 	@Override
 	public void generateRandomKeySet() {
 		KeyGenerator keyGen = null;
 		try {
-			keyGen = KeyGenerator.getInstance("AES");
-		} catch (NoSuchAlgorithmException e) {
+			keyGen = KeyGenerator.getInstance("AES","BC");
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			boolean fucked = true;
 		}
 		keyGen.init(128);//128 192 256 
@@ -41,11 +47,11 @@ public class AlgAES implements ValidAlgorithm {
 	}
 
 	@Override
-	public File encryptFile(File fileIn) {
+	public FileAndTimer encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
-			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding","BC");
 			cipher.init(Cipher.ENCRYPT_MODE, (Key)keySet.getEncKey());
 			initVector = cipher.getIV();
 	         
@@ -53,16 +59,19 @@ public class AlgAES implements ValidAlgorithm {
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startEncTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
-	         
+	        fat.testTimer.endEncTimer();
+	        
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
 	         
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
+	        fat.file = fileOut;
+	        return fat;
+		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -71,18 +80,20 @@ public class AlgAES implements ValidAlgorithm {
 	}
 
 	@Override
-	public File decryptFile(File fileIn) {
+	public FileAndTimer decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
-			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding","BC");
 			cipher.init(Cipher.DECRYPT_MODE, (Key)keySet.getDecKey(), new IvParameterSpec(initVector));
 	         
 	        FileInputStream inputStream = new FileInputStream(fileIn);
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startDecTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        fat.testTimer.endDecTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -90,8 +101,9 @@ public class AlgAES implements ValidAlgorithm {
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
-		} catch (InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
+	        fat.file = fileOut;
+	        return fat;
+		} catch (InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
 			e.printStackTrace();
 			return null;
 		}

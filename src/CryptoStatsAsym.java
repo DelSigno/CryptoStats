@@ -10,11 +10,11 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 import cryptostats.algorithms.AlgAES;
-import cryptostats.algorithms.AlgElGamal;
 import cryptostats.algorithms.AlgNTRU;
 import cryptostats.algorithms.AlgRSA;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
+import cryptostats.data.FileAndTimer;
 import cryptostats.timeing.TestTimer;
 import NIST.MCT;
 
@@ -69,14 +69,15 @@ public class CryptoStatsAsym {
 		//Generate Random key
 		algorithmInstance.generateRandomKeySet();
 		
-		Long startTime = System.nanoTime();
+		//Long startTime = System.nanoTime();
 		//Encrypts the file
-		File encryptedFile = algorithmInstance.encryptFile(fileToEncrypt);
-		testTimer.setEncTime(System.nanoTime() - startTime);
+		File encryptedFile = algorithmInstance.encryptFile(fileToEncrypt).file;
+		//testTimer.setEncTime(System.nanoTime() - startTime);
 
 		//Decrypts the file
-		File decryptedFile = algorithmInstance.decryptFile(encryptedFile);
-		testTimer.setDecTime(System.nanoTime() - startTime - testTimer.getEncTime());
+		FileAndTimer  goodInfo = algorithmInstance.decryptFile(encryptedFile);
+		File decryptedFile = goodInfo.file;
+		testTimer = goodInfo.testTimer;
 		
 		DataInputStream originalFileStream;
 		DataInputStream modFileStream;

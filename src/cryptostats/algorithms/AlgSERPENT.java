@@ -24,13 +24,18 @@ import org.bouncycastle.crypto.engines.SerpentEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.jcajce.provider.symmetric.Serpent;
 
+import cryptostats.data.FileAndTimer;
+import cryptostats.timeing.TestTimer;
+
 public class AlgSERPENT implements ValidAlgorithm{
 	
 	private KeySet keySet = null;
 	private byte[] initVector = null;
+	private FileAndTimer fat = new FileAndTimer();
 	
 	public AlgSERPENT(){
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		fat.testTimer =  new TestTimer();
 	}
 	
 	public void generateRandomKeySet() {
@@ -47,7 +52,7 @@ public class AlgSERPENT implements ValidAlgorithm{
 	}
 
 	@Override
-	public File encryptFile(File fileIn) {
+	public FileAndTimer encryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_encrypted");
 
 		try {
@@ -59,7 +64,9 @@ public class AlgSERPENT implements ValidAlgorithm{
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startEncTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        fat.testTimer.endEncTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -67,7 +74,8 @@ public class AlgSERPENT implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
 			e.printStackTrace();
 			return null;
@@ -77,7 +85,7 @@ public class AlgSERPENT implements ValidAlgorithm{
 	}
 
 	@Override
-	public File decryptFile(File fileIn) {
+	public FileAndTimer decryptFile(File fileIn) {
 		File fileOut = new File(fileIn.getAbsolutePath()+"_decrypted");
 
 		try {
@@ -88,7 +96,9 @@ public class AlgSERPENT implements ValidAlgorithm{
 	        byte[] inputBytes = new byte[(int) fileIn.length()];
 	        inputStream.read(inputBytes);
 	         
+	        fat.testTimer.startDecTimer();
 	        byte[] outputBytes = cipher.doFinal(inputBytes);
+	        fat.testTimer.endDecTimer();
 	         
 	        FileOutputStream outputStream = new FileOutputStream(fileOut);
 	        outputStream.write(outputBytes);
@@ -96,7 +106,8 @@ public class AlgSERPENT implements ValidAlgorithm{
 	        inputStream.close();
 	        outputStream.close();
 	        
-	        return fileOut;
+	        fat.file = fileOut;
+	        return fat;
 		} catch (InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException | IOException | NoSuchProviderException e) {
 			e.printStackTrace();
 			return null;

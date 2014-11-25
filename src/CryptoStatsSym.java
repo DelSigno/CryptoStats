@@ -16,6 +16,7 @@ import cryptostats.algorithms.AlgSPECK;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import cryptostats.data.AlgSet;
+import cryptostats.data.FileAndTimer;
 import cryptostats.timeing.TestTimer;
 import NIST.MCT;
 
@@ -51,47 +52,53 @@ public class CryptoStatsSym {
 	public TestTimer testFileTime(int fileSize) {
 
 		//Generate random Plaintext
-		File fileToEncrypt = generateRandomPlaintext(algName + "_testfile", fileSize);
+		File fileToEncrypt = generateRandomPlaintext("testfiles" + "\\" + algName + "_testfile", fileSize);
 		TestTimer testTimer = new TestTimer();
 		
 		//Generate Random key
 		algorithmInstance.generateRandomKeySet();
 		
-		Long startTime = System.nanoTime();
+		//Long startTime = System.nanoTime();
 		//Encrypts the file
-		File encryptedFile = algorithmInstance.encryptFile(fileToEncrypt);
-		testTimer.setEncTime(System.nanoTime() - startTime);
+		File encryptedFile = algorithmInstance.encryptFile(fileToEncrypt).file;
+		//testTimer.setEncTime(System.nanoTime() - startTime);
 
 		//Decrypts the file
-		File decryptedFile = algorithmInstance.decryptFile(encryptedFile);
-		testTimer.setDecTime(System.nanoTime() - startTime - testTimer.getEncTime());
+		FileAndTimer  goodInfo = algorithmInstance.decryptFile(encryptedFile);
+		File decryptedFile = goodInfo.file;
+		testTimer = goodInfo.testTimer;
 		
 		
 		
-		//From this point on we are just checking for consistency between streams
-		DataInputStream originalFileStream;
-		DataInputStream modFileStream;
 		
-		try {
-			originalFileStream = new DataInputStream(new FileInputStream(fileToEncrypt));
-			modFileStream = new DataInputStream(new FileInputStream(decryptedFile));
-			
-			System.out.println("Checking file consistency");
-			for(int i = 0; i < fileSize ; i++){
-				if(originalFileStream.readByte() != modFileStream.readByte()){
-					System.out.println("There was an error with file encryption/decryption \n"+
-										"The file is not consistance.");
-					return null;
+		
+		if (false) {
+			//will check files for consistency
+			//From this point on we are just checking for consistency between streams
+			DataInputStream originalFileStream;
+			DataInputStream modFileStream;
+			try {
+				originalFileStream = new DataInputStream(new FileInputStream(
+						fileToEncrypt));
+				modFileStream = new DataInputStream(new FileInputStream(
+						decryptedFile));
+
+				System.out.println("Checking file consistency");
+				for (int i = 0; i < fileSize; i++) {
+					if (originalFileStream.readByte() != modFileStream
+							.readByte()) {
+						System.out
+								.println("There was an error with file encryption/decryption \n"
+										+ "The file is not consistance.");
+						return null;
+					}
+
 				}
 
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		
-		
-	
 		return testTimer;
 		
 		

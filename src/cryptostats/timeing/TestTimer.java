@@ -11,6 +11,12 @@ public class TestTimer {
 	private long encryptionTime = 0;
 	private long decryptionTime = 0;
 	
+	private long encStartTime = 0;
+	private long encEndTime = 0;
+	
+	private long decStartTime = 0;
+	private long decEndTime = 0;
+	
 	public TestTimer(){
 		
 	}
@@ -23,7 +29,22 @@ public class TestTimer {
 		encryptionTime = newTime;
 	}
 	
+	public void startEncTimer(){
+		encStartTime = System.nanoTime();
+	}
+	
+	public void endEncTimer(){
+		setEncTime(System.nanoTime()-encStartTime);
+	}
+	
 
+	public void startDecTimer(){
+		decStartTime = System.nanoTime();
+	}
+	
+	public void endDecTimer(){
+		setDecTime(System.nanoTime()-decStartTime);
+	}
 	
 	public long getDecTime(){
 		return decryptionTime;
