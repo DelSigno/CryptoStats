@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import cryptostats.algorithms.AlgAES;
+import cryptostats.algorithms.AlgAES128;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import NIST.MCT;
@@ -20,7 +20,7 @@ public class CryptoStats {
 	 * bothered implementing, I'm a douche
 	 */
 	private static final String ALGNAME = "AlgAES";
-	ValidAlgorithm algorithmInstance = new AlgAES();
+	ValidAlgorithm algorithmInstance = new AlgAES128();
 	private static final int PLAINTEXTLENGTH = 1000;//in kilobytes
 	
 	

@@ -40,7 +40,7 @@ import cryptostats.data.AlgSet;
 import cryptostats.timeing.TestTimer;
 
 
-public class StatDriver {
+public class StatDriverRSA16384 {
 	
 	//AES and Serpent work with long files
 	//SIMON and SPECK must have 128/8 file size
@@ -52,7 +52,7 @@ public class StatDriver {
 	
 	
 	//private static final int PLAINTEXTLENGTH = (16)*(65)*(1022);//in bytes2037
-	private static final int PLAINTEXTLENGTH = (32)*10000;//in bytes
+	private static final int PLAINTEXTLENGTH = 2037;//in bytes
 	private static final double MEANTOL = 10;//in bytes/sec
 
 	public static void main(String[] args) {
@@ -63,45 +63,44 @@ public class StatDriver {
         String reportDate = df.format(today);
         String reportTime = tf.format(today);
        
-        String reportTag = "016_";
+        String reportTag = "015_";
 		
 		AlgSet[] algorithms = {
 				
-				//new AlgSet(new AlgRSA16384(),reportTag + "AlgRSA16384"),
+				new AlgSet(new AlgRSA16384(),reportTag + "AlgRSA16384"),
 				
 				
 				
 				//new AlgSet(new AlgAES128crypto(),reportTag + "AlgAES128crypto"),
 				
-				new AlgSet(new AlgAES128(),reportTag + "AlgAES128"),
-				new AlgSet(new AlgAES192(),reportTag + "AlgAES192"),
-				new AlgSet(new AlgAES256(),reportTag + "AlgAES256"),
-			
-				new AlgSet(new AlgSERPENT128(),reportTag + "AlgSERPENT128"),
-				new AlgSet(new AlgSERPENT192(),reportTag + "AlgSERPENT192"),
-				new AlgSet(new AlgSERPENT256(),reportTag + "AlgSERPENT256"),
+//				new AlgSet(new AlgAES128(),reportTag + "AlgAES128"),
+//				new AlgSet(new AlgAES192(),reportTag + "AlgAES192"),
+//				new AlgSet(new AlgAES256(),reportTag + "AlgAES256"),
+//				
+	//			new AlgSet(new AlgSERPENT128(),reportTag + "AlgSERPENT128"),
+//				new AlgSet(new AlgSERPENT192(),reportTag + "AlgSERPENT192"),
+//				new AlgSet(new AlgSERPENT256(),reportTag + "AlgSERPENT256"),
 				
-				new AlgSet(new AlgSIMON128(),reportTag + "AlgSIMON128"),
-				new AlgSet(new AlgSIMON192(),reportTag + "AlgSIMON192"),
-				new AlgSet(new AlgSIMON256(),reportTag + "AlgSIMON256"),
-				new AlgSet(new AlgSIMON96_64(),reportTag + "AlgSIMON96_64"),
-				new AlgSet(new AlgSIMON128_64(),reportTag + "AlgSIMON128_64"),
-				new AlgSet(new AlgSIMON64_32(),reportTag + "AlgSIMON64_32"),
-				
-				new AlgSet(new AlgSPECK128(),reportTag + "AlgSPECK28"),
-				new AlgSet(new AlgSPECK192(),reportTag + "AlgSPECK192"),
-				new AlgSet(new AlgSPECK256(),reportTag + "AlgSPECK256"),
-				new AlgSet(new AlgSPECK96_64(),reportTag + "AlgSPECK96_64"),
-				new AlgSet(new AlgSPECK128_64(),reportTag + "AlgSPECK128_64"),
-				new AlgSet(new AlgSPECK64_32(),reportTag + "AlgSPECK64_32"),
-				
-//				new AlgSet(new AlgNTRU128(),reportTag + "AlgNTRU128"),
-//				new AlgSet(new AlgNTRU256(),reportTag + "AlgNTRU256")
+//				new AlgSet(new AlgSIMON128(),reportTag + "AlgSIMON128"),
+//				new AlgSet(new AlgSIMON192(),reportTag + "AlgSIMON192"),
+//				new AlgSet(new AlgSIMON256(),reportTag + "AlgSIMON256"),
+//				new AlgSet(new AlgSIMON96_64(),reportTag + "AlgSIMON96_64"),
+//				new AlgSet(new AlgSIMON128_64(),reportTag + "AlgSIMON128_64"),
+//				new AlgSet(new AlgSIMON64_32(),reportTag + "AlgSIMON64_32"),
+//				
+//				new AlgSet(new AlgSPECK128(),reportTag + "AlgSPECK28"),
+//				new AlgSet(new AlgSPECK192(),reportTag + "AlgSPECK192"),
+//				new AlgSet(new AlgSPECK256(),reportTag + "AlgSPECK256"),
+//				new AlgSet(new AlgSPECK96_64(),reportTag + "AlgSPECK96_64"),
+//				new AlgSet(new AlgSPECK128_64(),reportTag + "AlgSPECK128_64"),
+//				new AlgSet(new AlgSPECK64_32(),reportTag + "AlgSPECK64_32"),
+//				
+				//new AlgSet(new AlgNTRU128(),reportTag + "AlgNTRU128"),
+				//new AlgSet(new AlgNTRU256(),reportTag + "AlgNTRU256")
 				
 		};
 		
 		ArrayList<ArrayList<Double>> data =  new ArrayList<ArrayList<Double>>();
-		ArrayList<ArrayList<Double>> convergence =  new ArrayList<ArrayList<Double>>();
 /*{
 				new ArrayList<Double>(),
 				new ArrayList<Double>(),
@@ -124,7 +123,6 @@ public class StatDriver {
 			
 			//Adds new data
 			data.add(new ArrayList<Double>());
-			convergence.add(new ArrayList<Double>());
 			
 			
 			
@@ -133,7 +131,7 @@ public class StatDriver {
 			//Also new loop shit
 			abpsm = new double[]{0,0,0,0,0};
 			testing = 0;
-			while(testing != (-1)){
+			while((testing != (-1))&&(testing < 10)){
 				//testing starts at 1!!
 				testing++;
 				TestTimer timer = meta.testFileTime(PLAINTEXTLENGTH);
@@ -141,8 +139,8 @@ public class StatDriver {
 				//Takes the total time for encryption then decryption
 				data.get(i).add(((double)timer.getTotalTime())/NANOCONVERTER);
 				//System.out.println("test time: " + timer.getTotalTime() );
-				bytespersecond = (PLAINTEXTLENGTH)/(((double)timer.getTotalTime())/NANOCONVERTER);
-				convergence.get(i).add(bytespersecond);
+				bytespersecond = (PLAINTEXTLENGTH*16)/(((double)timer.getTotalTime())/NANOCONVERTER);
+				
 				
 				abpsm[4] = ((abpsm[3]*(((double)testing)-1.0)) + bytespersecond)/((double)testing);
 				
@@ -176,16 +174,13 @@ public class StatDriver {
 			//Prints out the data for the specific cipher
 		    try {
 		    	File tempFile = new File(dirName + "\\" + "data_" + algorithms[i].getName());
-		    	File convergenceFile  = new File(dirName + "\\" + "data_convergence_" + algorithms[i].getName());
+			    FileOutputStream fos = new FileOutputStream(tempFile); 
 			    PrintWriter pw = new PrintWriter(tempFile);
-			    PrintWriter pwc = new PrintWriter(convergenceFile);
 				for(int d = 0; d < data.get(i).size(); d++){
 					//System.out.println("print writer printing");
 					pw.printf("%.12f\n" , data.get(i).get(d));
-					pwc.printf("%.12f\n" , convergence.get(i).get(d));
 				}
 				pw.close();
-				pwc.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

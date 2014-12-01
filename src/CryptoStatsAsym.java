@@ -9,9 +9,10 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import cryptostats.algorithms.AlgAES;
-import cryptostats.algorithms.AlgNTRU;
-import cryptostats.algorithms.AlgRSA;
+import cryptostats.algorithms.AlgAES128;
+import cryptostats.algorithms.AlgNTRU128;
+import cryptostats.algorithms.AlgNTRU256;
+import cryptostats.algorithms.AlgRSA512;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import cryptostats.data.FileAndTimer;
@@ -28,11 +29,11 @@ public class CryptoStatsAsym {
 
 	//ValidAlgorithm algorithmInstance = new AlgRSA();
 	//ValidAlgorithm algorithmInstance = new AlgElGamal();
-	ValidAlgorithm algorithmInstance = new AlgNTRU();
+	ValidAlgorithm algorithmInstance = new AlgRSA512();
 
 	
-	private static final String INITIALFILENAME = "ntrutest";
-	private static final int PLAINTEXTLENGTH = 65;//in bytes
+	private static final String INITIALFILENAME = "rsatest";
+	private static final int PLAINTEXTLENGTH = (53);//in bytes
 	private static final int TESTS = 10;
 	private static final long NANOCONVERTER = 1000000000L;
 	

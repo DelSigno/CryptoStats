@@ -9,10 +9,10 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import cryptostats.algorithms.AlgAES;
-import cryptostats.algorithms.AlgSERPENT;
-import cryptostats.algorithms.AlgSIMON;
-import cryptostats.algorithms.AlgSPECK;
+import cryptostats.algorithms.AlgAES128;
+import cryptostats.algorithms.AlgSERPENT128;
+import cryptostats.algorithms.AlgSIMON128;
+import cryptostats.algorithms.AlgSPECK128;
 import cryptostats.algorithms.KeySet;
 import cryptostats.algorithms.ValidAlgorithm;
 import cryptostats.data.AlgSet;
@@ -23,7 +23,7 @@ import NIST.MCT;
 
 public class CryptoStatsSym {
 
-
+	public static final boolean CHECKFORCONSISTENCY = true;
 	
 	/**
 	 * Some variable we may use
@@ -72,7 +72,7 @@ public class CryptoStatsSym {
 		
 		
 		
-		if (false) {
+		if ((CHECKFORCONSISTENCY)&&(Math.random() < .01)) {
 			//will check files for consistency
 			//From this point on we are just checking for consistency between streams
 			DataInputStream originalFileStream;
